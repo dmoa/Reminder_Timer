@@ -17,7 +17,7 @@ struct Color {
 #define NUM_BYTES LENGTH*LENGTH*3
 #define TICK 100
 
-void SetColor(u8* pixels, Color color) {
+static inline void SetColor(u8* pixels, Color color) {
     for (u16 i = 0; i < LENGTH*LENGTH; i ++) {
         pixels[i*3] = color.r;
         pixels[i*3 + 1] = color.g;
@@ -39,7 +39,16 @@ int main(int argc, char* argv[]) {
     SDL_Surface* surface = SDL_CreateRGBSurfaceWithFormatFrom(pixels, 16, 16, 8 * 3, 16 * 3, SDL_PIXELFORMAT_RGB24);
     SDL_SetWindowIcon(window, surface);
 
-    const u32 duration = 5000;
+    FILE* fp = fopen("settings", "r");
+    if (! fp) SDL_Log("file not found!");
+    char buffer [255];
+    fgets(buffer, 255, fp);
+    fclose(fp);
+
+    u32 duration;
+    sscanf(buffer, "%d", & duration);
+    duration *= 60000; // minutes to milliseconds
+
     s32 counter = duration;
     bool counter_finished = false;
 
