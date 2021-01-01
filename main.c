@@ -39,7 +39,8 @@ int main(int argc, char* argv[]) {
     SDL_Surface* surface = SDL_CreateRGBSurfaceWithFormatFrom(pixels, 16, 16, 8 * 3, 16 * 3, SDL_PIXELFORMAT_RGB24);
     SDL_SetWindowIcon(window, surface);
 
-    FILE* fp = fopen("settings", "r");
+    // read the duration from file into buffer
+    FILE* fp = fopen("settings.txt", "r");
     if (! fp) SDL_Log("file not found!");
     char buffer [255];
     fgets(buffer, 255, fp);
@@ -66,6 +67,7 @@ int main(int argc, char* argv[]) {
                             break;
 
                         case SDLK_RETURN:
+                            // restart counter
                             counter_finished = false;
                             counter = duration;
                             SetColor(pixels, GREY);
@@ -80,6 +82,7 @@ int main(int argc, char* argv[]) {
             }
         }
 
+        // We check counter_finished before setting the window icon in order to not boil the cpu.
         if (counter < 0 && counter_finished == false) {
             counter_finished = true;
             SetColor(pixels, GREEN);
